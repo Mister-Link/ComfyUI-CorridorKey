@@ -23,8 +23,12 @@ def _preload_cuda_runtime():
     """
     try:
         import nvidia
-        nvidia_dir = os.path.dirname(nvidia.__file__)
+        # nvidia is a PEP 420 namespace package (no __init__.py), so __file__ is
+        # always None here -- use __path__ (the namespace's search dirs) instead.
+        nvidia_dir = next(iter(nvidia.__path__), None)
     except ImportError:
+        return
+    if nvidia_dir is None:
         return
     for subdir in ("cu13/lib", "cudnn/lib"):
         libs = sorted(glob.glob(os.path.join(nvidia_dir, subdir, "*.so*")))
