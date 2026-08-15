@@ -20,9 +20,10 @@ from ..utils.color_utils import (
 
 logger = logging.getLogger("CorridorKeyLuminia")
 
-# Only "green" screens are supported until a blue GreenFormer checkpoint is installed
-# alongside CorridorKey_v1.0.pth (see CorridorKeyBlue_1.0 on Hugging Face).
-SCREEN_CHANNEL = {"Green": 1}
+# Blue requires loading the separate CorridorKeyBlue_1.0 checkpoint (see
+# nikopueringer/CorridorKeyBlue_1.0 on Hugging Face) via the Model Loader node —
+# it's a distinct GreenFormer checkpoint, not a flag on the green one.
+SCREEN_CHANNEL = {"Green": 1, "Blue": 2}
 
 # Chunk size for GPU inference — caps peak VRAM regardless of how many frames are
 # fed in at once, matching the reference Space's batch sizing per resolution.
@@ -31,7 +32,7 @@ GPU_BATCH_SIZES = {1024: 32, 2048: 16}
 
 class CKL_Keyer:
     """
-    CorridorKey (Luminia) Keyer — self-mask-generating green screen keyer.
+    CorridorKey (Luminia) Keyer — self-mask-generating green/blue screen keyer.
 
     Ported from https://huggingface.co/spaces/Luminia/CorridorKey. Unlike the earlier
     CorridorKey ComfyUI node, this one generates its own alpha hint internally
@@ -45,7 +46,7 @@ class CKL_Keyer:
             "required": {
                 "model": ("CKL_MODEL",),
                 "image": ("IMAGE",),
-                "screen_color": (["Green"], {"default": "Green"}),
+                "screen_color": (["Green", "Blue"], {"default": "Green"}),
                 "mask_mode": (
                     ["Hybrid (auto)", "AI (BiRefNet)", "Fast (classical)"],
                     {"default": "Hybrid (auto)"},
@@ -81,7 +82,7 @@ class CKL_Keyer:
         masks_np = []
         fast_n, biref_n = 0, 0
         for i in range(batch):
-            mask, method = generate_mask(images_np[i], mask_mode, screen_color="green")
+            mask, method = generate_mask(images_np[i], mask_mode, screen_color=screen_color.lower())
             if mask.ndim == 3:
                 mask = mask[:, :, 0]
             masks_np.append(mask)

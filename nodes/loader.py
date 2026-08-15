@@ -56,9 +56,11 @@ class CKL_ModelLoader:
         if not os.path.isfile(model_path):
             raise FileNotFoundError(
                 f"Model not found: {model_path}\n"
-                f"Download CorridorKey_v1.0.pth (or .safetensors) from:\n"
-                f"  https://huggingface.co/nikopueringer/CorridorKey_v1.0\n"
-                f"and place it in: {os.path.dirname(model_path)}"
+                f"Download a checkpoint (.pth or .safetensors) from:\n"
+                f"  green: https://huggingface.co/nikopueringer/CorridorKey_v1.0\n"
+                f"  blue:  https://huggingface.co/nikopueringer/CorridorKeyBlue_1.0\n"
+                f"and place it in: {os.path.dirname(model_path)}\n"
+                f"Pick the checkpoint matching the Keyer node's screen_color."
             )
 
         img_size = int(resolution)
