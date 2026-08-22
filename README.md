@@ -1,7 +1,7 @@
 # ComfyUI-CorridorKey
 
 ComfyUI custom node porting [CorridorKey](https://github.com/nikopueringer/CorridorKey) (GreenFormer)
-green-screen keying, following the pipeline design of the
+green/blue-screen keying, following the pipeline design of the
 [Luminia/CorridorKey](https://huggingface.co/spaces/Luminia/CorridorKey) Hugging Face Space: the node
 generates its own alpha mask internally (fast classical HSV detection, AI via BiRefNet, or a hybrid
 auto-fallback between the two) instead of requiring a pre-made mask input.
@@ -16,10 +16,11 @@ auto-fallback between the two) instead of requiring a pre-made mask input.
 ## Setup
 
 1. `pip install -r requirements.txt` (inside your ComfyUI venv).
-2. Download the GreenFormer checkpoint (`CorridorKey_v1.0.pth` or `.safetensors`) from
-   [nikopueringer/CorridorKey_v1.0](https://huggingface.co/nikopueringer/CorridorKey_v1.0) and place it in
-   `ComfyUI/models/corridorkey/`.
-3. Currently green-screen only — a blue-screen checkpoint (`CorridorKeyBlue_1.0`) can be wired in later.
+2. Download a GreenFormer checkpoint and place it in `ComfyUI/models/corridorkey/`:
+   - Green screen: [nikopueringer/CorridorKey_v1.0](https://huggingface.co/nikopueringer/CorridorKey_v1.0) (`CorridorKey_v1.0.pth` or `.safetensors`)
+   - Blue screen: [nikopueringer/CorridorKeyBlue_1.0](https://huggingface.co/nikopueringer/CorridorKeyBlue_1.0) (`CorridorKeyBlue_1.0.safetensors`)
+3. Set the Keyer node's `screen_color` to match whichever checkpoint you loaded — it's a separate checkpoint
+   per color, not a flag on the green one.
 
 ## Credits
 
